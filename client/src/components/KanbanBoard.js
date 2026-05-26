@@ -1,6 +1,6 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import api from '../api';
+import API from '../api';
 
 const STATUSES = [
   { key: 'Applied', label: 'Applied', color: '#2563eb', border: 'border-blue-500' },
@@ -26,7 +26,7 @@ export default function KanbanBoard({ applications, setApplications }) {
     const appId = result.draggableId;
     const status = STATUSES[result.destination.droppableId].key;
     try {
-      await api.put(`/applications/${appId}`, { status });
+      await API.put(`/api/applications/${appId}`, { status });
       setApplications(applications.map((app) => (app._id === appId ? { ...app, status } : app)));
     } catch (err) {
       console.error('Update failed', err);

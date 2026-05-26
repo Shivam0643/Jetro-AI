@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import api from '../api';
+import API from '../api';
 
 Chart.register(...registerables);
 
@@ -98,7 +98,7 @@ export default function Dashboard({ applications, activeTab }) {
     setAiLoading(true);
     setAiError('');
     try {
-      const res = await api.post('/ai/questions', { role, company });
+      const res = await API.post('/api/ai/questions', { role, company });
       const parsed = parseQuestions(res.data.questions || '');
       const formatted = parsed.map((text) => ({ text, type: questionType(text) }));
       setQuestions(formatted);

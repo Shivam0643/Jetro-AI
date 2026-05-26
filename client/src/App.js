@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Dashboard from './components/Dashboard';
 import ApplicationForm from './components/ApplicationForm';
 import KanbanBoard from './components/KanbanBoard';
-import api from './api';
+import API from './api';
 
 const navItems = [
   { id: 'overview', label: 'Overview', icon: '🏠' },
@@ -23,7 +23,7 @@ export default function App() {
   const fetchApps = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/applications');
+      const res = await API.get('/api/applications');
       setApplications(res.data);
     } catch (err) {
       console.error('Failed to load applications', err);

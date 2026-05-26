@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api';
+import API from '../api';
 
 export default function ApplicationForm({ onCreated, onClose }) {
   const [form, setForm] = useState({
@@ -18,7 +18,7 @@ export default function ApplicationForm({ onCreated, onClose }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post('/applications', {
+      await API.post('/api/applications', {
         candidateName: form.candidateName,
         role: form.role,
         company: form.company,
