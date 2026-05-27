@@ -1,0 +1,91 @@
+{
+  "name": "Research Canva",
+  "elements": [
+    {
+      "id": "app-preview",
+      "type": "frame",
+      "title": "Job Application Manager",
+      "data": {
+        "file": ".jetro/frames/job-application-manager-embed.html"
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": {
+        "width": 1200,
+        "height": 800
+      }
+    },
+    {
+      "id": "project-title",
+      "type": "frame",
+      "title": "AI Job Application Manager - MERN + AI",
+      "data": {
+        "file": ".jetro/frames/job-application-manager-title.html"
+      },
+      "position": {
+        "x": 0,
+        "y": 820
+      },
+      "size": {
+        "width": 1200,
+        "height": 180
+      }
+    },
+    {
+      "id": "project-features",
+      "type": "frame",
+      "title": "Project Features",
+      "data": {
+        "file": ".jetro/frames/job-application-manager-features.html"
+      },
+      "position": {
+        "x": 0,
+        "y": 1020
+      },
+      "size": {
+        "width": 580,
+        "height": 380
+      }
+    },
+    {
+      "id": "tech-stack",
+      "type": "frame",
+      "title": "Tech Stack",
+      "data": {
+        "file": ".jetro/frames/job-application-manager-stack.html"
+      },
+      "position": {
+        "x": 620,
+        "y": 1020
+      },
+      "size": {
+        "width": 580,
+        "height": 380
+      }
+    },
+    {
+      "id": "pipeline-chart",
+      "type": "frame",
+      "title": "Application Pipeline Stats",
+      "data": {
+        "file": ".jetro/frames/job-application-manager-pipeline-chart.html"
+      },
+      "position": {
+        "x": 0,
+        "y": 1420
+      },
+      "size": {
+        "width": 1200,
+        "height": 420
+      }
+    }
+  ],
+  "edges": [],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  }
+}
