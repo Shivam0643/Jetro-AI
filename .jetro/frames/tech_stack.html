@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tech Stack</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #10b981;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f0f6fc;
+    margin-bottom: 18px;
+  }
+  .arch {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .layer {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .layer::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .layer:hover { border-color: var(--accent); transform: translateX(3px); }
+  .layer-frontend::before { background: #3b82f6; --accent: #3b82f6; }
+  .layer-backend::before  { background: #10b981; --accent: #10b981; }
+  .layer-db::before       { background: #f59e0b; --accent: #f59e0b; }
+  .layer-ai::before       { background: #a855f7; --accent: #a855f7; }
+  .layer-deploy::before   { background: #ef4444; --accent: #ef4444; }
+  .icon { font-size: 24px; width: 36px; text-align: center; }
+  .info { flex: 1; }
+  .layer-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 2px;
+  }
+  .layer-desc { font-size: 11px; color: #8b949e; }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    color: #8b949e;
+    border: 1px solid #30363d;
+  }
+  .badge.react    { background: rgba(59,130,246,0.15);  color: #60a5fa; border-color: #3b82f6; }
+  .badge.node     { background: rgba(16,185,129,0.15);  color: #34d399; border-color: #10b981; }
+  .badge.express  { background: rgba(16,185,129,0.1);   color: #6ee7b7; border-color: #10b981; }
+  .badge.mongo    { background: rgba(245,158,11,0.15);  color: #fbbf24; border-color: #f59e0b; }
+  .badge.ai       { background: rgba(168,85,247,0.15);  color: #c084fc; border-color: #a855f7; }
+  .badge.render   { background: rgba(239,68,68,0.15);   color: #f87171; border-color: #ef4444; }
+  .badge.tailwind { background: rgba(6,182,212,0.15);   color: #22d3ee; border-color: #06b6d4; }
+  .arrow {
+    text-align: center;
+    color: #30363d;
+    font-size: 14px;
+    line-height: 1;
+    margin: -4px 0;
+  }
+</style>
+</head>
+<body>
+  <div class="title">Architecture</div>
+  <h1>Tech Stack</h1>
+  <div class="arch">
+    <div class="layer layer-frontend">
+      <div class="icon">⚛️</div>
+      <div class="info">
+        <div class="layer-name">Frontend</div>
+        <div class="layer-desc">React SPA · Kanban board · Dashboard</div>
+      </div>
+      <span class="badge react">React 18</span>
+      <span class="badge tailwind">Tailwind</span>
+    </div>
+    <div class="arrow">↕</div>
+    <div class="layer layer-backend">
+      <div class="icon">🟢</div>
+      <div class="info">
+        <div class="layer-name">Backend</div>
+        <div class="layer-desc">REST API · Application CRUD · AI integration</div>
+      </div>
+      <span class="badge node">Node.js</span>
+      <span class="badge express">Express</span>
+    </div>
+    <div class="arrow">↕</div>
+    <div class="layer layer-db">
+      <div class="icon">🍃</div>
+      <div class="info">
+        <div class="layer-name">Database</div>
+        <div class="layer-desc">Atlas cloud · Mongoose ODM · Applications collection</div>
+      </div>
+      <span class="badge mongo">MongoDB</span>
+    </div>
+    <div class="arrow">↕</div>
+    <div class="layer layer-ai">
+      <div class="icon">🤖</div>
+      <div class="info">
+        <div class="layer-name">AI Layer</div>
+        <div class="layer-desc">Interview question generation via LLM</div>
+      </div>
+      <span class="badge ai">OpenRouter AI</span>
+    </div>
+    <div class="arrow">↕</div>
+    <div class="layer layer-deploy">
+      <div class="icon">🚀</div>
+      <div class="info">
+        <div class="layer-name">Deployment</div>
+        <div class="layer-desc">Client + Server hosted on Render</div>
+      </div>
+      <span class="badge render">Render.com</span>
+    </div>
+  </div>
+</body>
+</html>

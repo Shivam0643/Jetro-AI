@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pipeline Chart</title>
+    <style>
+      body { margin: 0; min-height: 100vh; background: #0f172a; color: #ffffff; font-family: Inter, system-ui, sans-serif; }
+      .chart-shell { display: flex; flex-direction: column; height: 100vh; padding: 1.5rem; }
+      .chart-shell h2 { margin: 0 0 1rem; font-size: 1.5rem; color: #ffffff; }
+      #plot { flex: 1; }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div class="chart-shell">
+      <h2>Application Pipeline Stats</h2>
+      <div id="plot"></div>
+    </div>
+    <script>
+      const data = [{
+        x: ['Applied', 'Round 1', 'Round 2', 'Offer', 'Rejected'],
+        y: [12, 7, 5, 4, 3],
+        type: 'bar',
+        marker: { color: ['#38bdf8', '#a78bfa', '#fb923c', '#22c55e', '#ef4444'] }
+      }];
+      const layout = {
+        paper_bgcolor: '#0f172a',
+        plot_bgcolor: '#111827',
+        font: { color: '#e2e8f0' },
+        xaxis: { gridcolor: 'rgba(148,163,184,0.12)' },
+        yaxis: { gridcolor: 'rgba(148,163,184,0.12)', zerolinecolor: 'rgba(148,163,184,0.12)' },
+        margin: { t: 20, r: 20, b: 40, l: 40 }
+      };
+      Plotly.newPlot('plot', data, layout, { responsive: true, displayModeBar: false });
+    </script>
+  </body>
+</html>

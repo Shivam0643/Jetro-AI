@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>API Routes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #10b981;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f0f6fc;
+    margin-bottom: 16px;
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8b949e;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #21262d;
+  }
+  .routes { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+  .route {
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .route:hover { border-color: #30363d; }
+  .method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    min-width: 44px;
+    text-align: center;
+  }
+  .get    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .post   { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .put    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .delete { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #c9d1d9;
+    flex: 1;
+  }
+  .desc {
+    font-size: 11px;
+    color: #6e7681;
+  }
+  .base-url {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #10b981;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+  <div class="title">Backend Reference</div>
+  <h1>API Routes</h1>
+
+  <div class="base-url">Base: https://jetro-ai.onrender.com</div>
+
+  <div class="section-label">Applications</div>
+  <div class="routes">
+    <div class="route">
+      <span class="method get">GET</span>
+      <span class="path">/api/applications</span>
+      <span class="desc">Fetch all applications</span>
+    </div>
+    <div class="route">
+      <span class="method post">POST</span>
+      <span class="path">/api/applications</span>
+      <span class="desc">Create new application</span>
+    </div>
+    <div class="route">
+      <span class="method put">PUT</span>
+      <span class="path">/api/applications/:id</span>
+      <span class="desc">Update status / fields</span>
+    </div>
+    <div class="route">
+      <span class="method delete">DEL</span>
+      <span class="path">/api/applications/:id</span>
+      <span class="desc">Remove application</span>
+    </div>
+  </div>
+
+  <div class="section-label">AI</div>
+  <div class="routes">
+    <div class="route">
+      <span class="method post">POST</span>
+      <span class="path">/api/ai/questions</span>
+      <span class="desc">Generate interview questions</span>
+    </div>
+  </div>
+</body>
+</html>

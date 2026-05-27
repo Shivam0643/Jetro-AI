@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Job App Manager — Jetro Canvas</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #f0f6fc;
+    --muted: #8b949e;
+    --green: #10b981;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --teal: #06b6d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Top Nav ─────────────────────────────────────────────── */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; color: #fff;
+  }
+  .logo-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .logo-sub  { font-size: 11px; color: var(--muted); }
+  .topbar-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .canvas-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .canvas-label .dot {
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .badge-chip {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    background: rgba(16,185,129,0.1);
+    color: var(--green);
+    border: 1px solid rgba(16,185,129,0.3);
+  }
+
+  /* ── Canvas Grid ─────────────────────────────────────────── */
+  .canvas {
+    padding: 80px 32px 48px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    grid-template-rows: auto auto auto;
+    gap: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ── Panel Shell ─────────────────────────────────────────── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s, border-color 0.25s;
+  }
+  .panel:hover {
+    border-color: #484f58;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--surface2);
+    background: rgba(22,27,34,0.8);
+    flex-shrink: 0;
+  }
+  .panel-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  .panel-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .panel-type  { font-size: 10px; font-weight: 600; color: var(--muted);
+                 background: var(--surface2); padding: 2px 8px;
+                 border-radius: 6px; margin-left: auto; }
+  .panel-body  { flex: 1; overflow: hidden; }
+
+  /* ── Layout Zones ─────────────────────────────────────────── */
+  .zone-main    { grid-column: 1; grid-row: 1 / 4; min-height: 640px; }
+  .zone-chart   { grid-column: 2; grid-row: 1; }
+  .zone-tech    { grid-column: 2; grid-row: 2; }
+  .zone-features { grid-column: 1 / 3; grid-row: 4; display: grid;
+                   grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* ── Live App Embed ─────────────────────────────────────── */
+  #live-embed iframe {
+    width: 100%; height: 100%; border: none;
+    min-height: 580px;
+  }
+  .embed-overlay {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 40px; text-align: center; height: 100%;
+    min-height: 580px;
+  }
+  .embed-overlay .icon { font-size: 48px; }
+  .embed-overlay h3 { font-size: 18px; font-weight: 700; }
+  .embed-overlay p { font-size: 13px; color: var(--muted); max-width: 360px; line-height: 1.6; }
+  .open-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green); color: #fff;
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .open-btn:hover { background: #0ea371; transform: scale(1.03); }
+
+  /* ── Chart Panel ─────────────────────────────────────────── */
+  #pipeline-chart { height: 280px; }
+
+  /* ── Tech Stack ─────────────────────────────────────────── */
+  .tech-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+  .tech-row {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tech-row::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .tech-row:hover { transform: translateX(3px); border-color: var(--accent,var(--green)); }
+  .tech-row.frontend::before { background: var(--blue);   --accent: var(--blue); }
+  .tech-row.backend::before  { background: var(--green);  --accent: var(--green); }
+  .tech-row.db::before       { background: var(--amber);  --accent: var(--amber); }
+  .tech-row.ai::before       { background: var(--purple); --accent: var(--purple); }
+  .tech-row.deploy::before   { background: var(--red);    --accent: var(--red); }
+  .tech-icon { font-size: 20px; width: 28px; text-align: center; }
+  .tech-info { flex: 1; }
+  .tech-name { font-size: 12px; font-weight: 700; color: var(--text); }
+  .tech-desc { font-size: 11px; color: var(--muted); }
+  .tech-tags { display: flex; gap: 5px; }
+  .tech-tag {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted); border: 1px solid var(--border);
+  }
+  .tech-tag.react  { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: var(--blue); }
+  .tech-tag.node   { background: rgba(16,185,129,0.15); color: #34d399; border-color: var(--green); }
+  .tech-tag.mongo  { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: var(--amber); }
+  .tech-tag.ai     { background: rgba(168,85,247,0.15); color: #c084fc; border-color: var(--purple); }
+  .tech-tag.render { background: rgba(239,68,68,0.15);  color: #f87171; border-color: var(--red); }
+  .tech-tag.tw     { background: rgba(6,182,212,0.15);  color: #22d3ee; border-color: var(--teal); }
+
+  /* ── Features Card ─────────────────────────────────────── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  .feat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .feat-card:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 16px rgba(16,185,129,0.1);
+    transform: translateY(-2px);
+  }
+  .feat-icon { font-size: 22px; }
+  .feat-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .feat-desc  { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .feat-tag {
+    font-size: 10px; font-weight: 600; width: fit-content;
+    padding: 2px 8px; border-radius: 20px; margin-top: auto;
+    background: rgba(16,185,129,0.1);
+    color: var(--green);
+    border: 1px solid rgba(16,185,129,0.3);
+  }
+
+  /* ── API Routes Card ─────────────────────────────────────── */
+  .api-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .base-url-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green);
+  }
+  .route-section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .route-section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--surface2);
+  }
+  .route-list { display: flex; flex-direction: column; gap: 6px; }
+  .route-item {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 9px 12px;
+    display: flex; align-items: center; gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .route-item:hover { border-color: var(--border); background: #21262d; }
+  .method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 7px; border-radius: 6px;
+    min-width: 42px; text-align: center;
+  }
+  .method.get    { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .method.post   { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .method.put    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .method.delete { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .route-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: #c9d1d9; flex: 1;
+  }
+  .route-desc { font-size: 11px; color: var(--muted); }
+
+  /* ── Grid wrapper for features+api ──────────────────────── */
+  .bottom-row {
+    grid-column: 1 / 3;
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: 24px;
+  }
+
+  /* ── Stats strip ─────────────────────────────────────────── */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 0 32px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(255,255,255,0.04);
+  }
+  .stat-card.total  { --accent: var(--blue); }
+  .stat-card.rounds { --accent: var(--green); }
+  .stat-card.offers { --accent: var(--amber); }
+  .stat-card.reject { --accent: var(--red); }
+  .stat-num  { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  /* ── Canvas section heading ─────────────────────────────── */
+  .section-head {
+    padding: 0 32px;
+    margin-bottom: 4px;
+    max-width: 1600px;
+    margin-left: auto; margin-right: auto;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-head h2 {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  .section-head::after {
+    content: ''; flex: 1; height: 1px; background: var(--surface2);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Top navigation bar -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">J</div>
+    <div>
+      <div class="logo-name">Jetro Canvas</div>
+      <div class="logo-sub">Workspace</div>
+    </div>
+  </div>
+  <div class="topbar-sep"></div>
+  <div class="canvas-label">
+    <div class="dot"></div>
+    AI Job Application Manager
+  </div>
+  <div class="topbar-right">
+    <span class="badge-chip">5 Elements</span>
+    <span class="badge-chip">Live</span>
+  </div>
+</div>
+
+<!-- Stats strip -->
+<div style="padding-top:68px">
+  <div class="stats-strip">
+    <div class="stat-card total">
+      <div>
+        <div class="stat-num">10</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">📋</span>
+    </div>
+    <div class="stat-card rounds">
+      <div>
+        <div class="stat-num">4</div>
+        <div class="stat-label">In Interviews</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">💬</span>
+    </div>
+    <div class="stat-card offers">
+      <div>
+        <div class="stat-num">2</div>
+        <div class="stat-label">Offers Received</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">🎉</span>
+    </div>
+    <div class="stat-card reject">
+      <div>
+        <div class="stat-num">1</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">❌</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main canvas grid -->
+<div class="canvas">
+
+  <!-- ① Live App Embed -->
+  <div class="panel zone-main" id="live-embed">
+    <div class="panel-header">
+      <div class="panel-dot"></div>
+      <span class="panel-title">🌐 Live Application — AI Job App Manager</span>
+      <span class="panel-type">Embed</span>
+    </div>
+    <div class="panel-body">
+      <div class="embed-overlay">
+        <div class="icon">🚀</div>
+        <h3>AI Job Application Manager</h3>
+        <p>
+          Your full-stack MERN application is deployed and running live on Render.
+          Click below to open it — the app may take up to 30 seconds to spin up
+          if it has been idle (Render free tier).
+        </p>
+        <a class="open-btn" href="https://application-manager-7juh.onrender.com" target="_blank">
+          ↗ Open Live App
+        </a>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px">
+          https://application-manager-7juh.onrender.com
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② Pipeline Chart -->
+  <div class="panel zone-chart">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:var(--blue);box-shadow:0 0 8px var(--blue)"></div>
+      <span class="panel-title">📊 Recruitment Pipeline</span>
+      <span class="panel-type">Chart</span>
+    </div>
+    <div class="panel-body">
+      <div id="pipeline-chart"></div>
+    </div>
+  </div>
+
+  <!-- ③ Tech Stack -->
+  <div class="panel zone-tech">
+    <div class="panel-header">
+      <div class="panel-dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple)"></div>
+      <span class="panel-title">🏗️ Tech Stack</span>
+      <span class="panel-type">Frame</span>
+    </div>
+    <div class="panel-body">
+      <div class="tech-grid">
+        <div class="tech-row frontend">
+          <span class="tech-icon">⚛️</span>
+          <div class="tech-info">
+            <div class="tech-name">Frontend</div>
+            <div class="tech-desc">SPA · Kanban · Dashboard</div>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-tag react">React 18</span>
+            <span class="tech-tag tw">Tailwind</span>
+          </div>
+        </div>
+        <div class="tech-row backend">
+          <span class="tech-icon">🟢</span>
+          <div class="tech-info">
+            <div class="tech-name">Backend</div>
+            <div class="tech-desc">REST API · CRUD · AI routes</div>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-tag node">Node.js</span>
+            <span class="tech-tag node">Express</span>
+          </div>
+        </div>
+        <div class="tech-row db">
+          <span class="tech-icon">🍃</span>
+          <div class="tech-info">
+            <div class="tech-name">Database</div>
+            <div class="tech-desc">Atlas cloud · Mongoose ODM</div>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-tag mongo">MongoDB</span>
+          </div>
+        </div>
+        <div class="tech-row ai">
+          <span class="tech-icon">🤖</span>
+          <div class="tech-info">
+            <div class="tech-name">AI Layer</div>
+            <div class="tech-desc">Interview question generation</div>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-tag ai">OpenRouter AI</span>
+          </div>
+        </div>
+        <div class="tech-row deploy">
+          <span class="tech-icon">🚀</span>
+          <div class="tech-info">
+            <div class="tech-name">Deployment</div>
+            <div class="tech-desc">Client + Server on Render</div>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-tag render">Render.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom row: Features + API Routes -->
+  <div class="bottom-row">
+
+    <!-- ④ All Features -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-dot" style="background:var(--amber);box-shadow:0 0 8px var(--amber)"></div>
+        <span class="panel-title">✨ All Features</span>
+        <span class="panel-type">Note</span>
+      </div>
+      <div class="panel-body">
+        <div class="features-grid">
+          <div class="feat-card">
+            <div class="feat-icon">📋</div>
+            <div class="feat-title">Application Tracking</div>
+            <div class="feat-desc">Full CRUD for job applications. Track company, role, status, and dates across the pipeline.</div>
+            <span class="feat-tag">Core</span>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🗂️</div>
+            <div class="feat-title">Kanban Board</div>
+            <div class="feat-desc">Drag-and-drop cards across pipeline stages using react-beautiful-dnd.</div>
+            <span class="feat-tag">UI</span>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🤖</div>
+            <div class="feat-title">AI Interview Prep</div>
+            <div class="feat-desc">Generates tailored interview questions per role and company via OpenRouter LLM.</div>
+            <span class="feat-tag">AI</span>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">📊</div>
+            <div class="feat-title">Analytics Dashboard</div>
+            <div class="feat-desc">Live pipeline stats — total apps, interviews, offers, and rejections at a glance.</div>
+            <span class="feat-tag">Analytics</span>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🎨</div>
+            <div class="feat-title">Dark Mode UI</div>
+            <div class="feat-desc">Glassmorphic dark theme with Tailwind CSS, smooth hover transitions, and animations.</div>
+            <span class="feat-tag">Design</span>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">☁️</div>
+            <div class="feat-title">Cloud Persistence</div>
+            <div class="feat-desc">MongoDB Atlas stores all data with Mongoose. Full-stack deployed on Render.</div>
+            <span class="feat-tag">Infra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ API Routes -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-dot" style="background:var(--teal);box-shadow:0 0 8px var(--teal)"></div>
+        <span class="panel-title">🔌 API Routes Reference</span>
+        <span class="panel-type">Frame</span>
+      </div>
+      <div class="panel-body">
+        <div class="api-body">
+          <div class="base-url-box">Base: https://jetro-ai.onrender.com</div>
+
+          <div class="route-section-label">Applications</div>
+          <div class="route-list">
+            <div class="route-item">
+              <span class="method get">GET</span>
+              <span class="route-path">/api/applications</span>
+              <span class="route-desc">Fetch all</span>
+            </div>
+            <div class="route-item">
+              <span class="method post">POST</span>
+              <span class="route-path">/api/applications</span>
+              <span class="route-desc">Create new</span>
+            </div>
+            <div class="route-item">
+              <span class="method put">PUT</span>
+              <span class="route-path">/api/applications/:id</span>
+              <span class="route-desc">Update status</span>
+            </div>
+            <div class="route-item">
+              <span class="method delete">DEL</span>
+              <span class="route-path">/api/applications/:id</span>
+              <span class="route-desc">Remove entry</span>
+            </div>
+          </div>
+
+          <div class="route-section-label">AI</div>
+          <div class="route-list">
+            <div class="route-item">
+              <span class="method post">POST</span>
+              <span class="route-path">/api/ai/questions</span>
+              <span class="route-desc">Generate questions</span>
+            </div>
+          </div>
+
+          <div class="route-section-label">Request Bodies</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b949e;line-height:1.8">
+              <span style="color:#c084fc">POST</span> /api/applications<br>
+              <span style="color:#60a5fa">{</span> company, role, status,<br>
+              &nbsp;&nbsp;appliedDate, notes <span style="color:#60a5fa">}</span><br><br>
+              <span style="color:#c084fc">POST</span> /api/ai/questions<br>
+              <span style="color:#60a5fa">{</span> role, company <span style="color:#60a5fa">}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /bottom-row -->
+
+</div><!-- /canvas -->
+
+<script>
+// ② Pipeline Chart using Plotly
+Plotly.newPlot('pipeline-chart', [
+  {
+    x: ['Applied', 'Round 1', 'Round 2', 'Offer', 'Rejected'],
+    y: [3, 2, 2, 2, 1],
+    type: 'bar',
+    marker: {
+      color: ['#3b82f6','#10b981','#f59e0b','#22c55e','#ef4444'],
+      opacity: 0.9,
+    },
+    text: ['3','2','2','2','1'],
+    textposition: 'outside',
+    textfont: { color: '#f0f6fc', size: 13, family: 'Inter' },
+    hovertemplate: '<b>%{x}</b><br>Count: %{y}<extra></extra>',
+  }
+], {
+  paper_bgcolor: 'transparent',
+  plot_bgcolor: 'transparent',
+  font: { color: '#8b949e', family: 'Inter, sans-serif', size: 11 },
+  xaxis: {
+    gridcolor: '#21262d',
+    color: '#6e7681',
+    tickfont: { size: 11 },
+    fixedrange: true,
+  },
+  yaxis: {
+    gridcolor: '#21262d',
+    color: '#6e7681',
+    tickfont: { size: 11 },
+    title: { text: 'Applications', font: { size: 11 } },
+    fixedrange: true,
+  },
+  margin: { t: 24, b: 40, l: 50, r: 20 },
+  showlegend: false,
+  bargap: 0.35,
+}, {
+  displayModeBar: false,
+  responsive: true,
+});
+</script>
+</body>
+</html>

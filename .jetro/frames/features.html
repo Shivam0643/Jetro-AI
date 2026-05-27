@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Features</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #10b981;
+    margin-bottom: 4px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f0f6fc;
+    margin-bottom: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    border-color: #10b981;
+    box-shadow: 0 0 16px rgba(16,185,129,0.1);
+  }
+  .card-icon { font-size: 22px; }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f0f6fc;
+  }
+  .card-desc {
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.5;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: rgba(16,185,129,0.1);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.3);
+    width: fit-content;
+  }
+</style>
+</head>
+<body>
+  <div class="title">Capabilities</div>
+  <h1>All Features</h1>
+  <div class="grid">
+    <div class="card">
+      <div class="card-icon">📋</div>
+      <div class="card-title">Application Tracking</div>
+      <div class="card-desc">Full CRUD for job apps. Track company, role, status, and dates.</div>
+      <span class="tag">Core</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗂️</div>
+      <div class="card-title">Kanban Board</div>
+      <div class="card-desc">Drag-and-drop cards across pipeline stages with react-beautiful-dnd.</div>
+      <span class="tag">UI</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">AI Interview Prep</div>
+      <div class="card-desc">Generates tailored interview questions per role using OpenRouter LLM.</div>
+      <span class="tag">AI</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Analytics Dashboard</div>
+      <div class="card-desc">Live stats — total apps, interviews, offers, and rejections at a glance.</div>
+      <span class="tag">Analytics</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">Dark Mode UI</div>
+      <div class="card-desc">Glassmorphic dark theme with Tailwind CSS and smooth transitions.</div>
+      <span class="tag">Design</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">☁️</div>
+      <div class="card-title">Cloud Persistence</div>
+      <div class="card-desc">MongoDB Atlas stores all data. Deployed on Render with zero downtime.</div>
+      <span class="tag">Infra</span>
+    </div>
+  </div>
+</body>
+</html>

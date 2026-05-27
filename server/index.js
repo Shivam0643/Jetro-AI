@@ -24,15 +24,18 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb+srv://shivamlashkari246_db_user:shivam06@cluster0.uoel9fb.mongodb.net/jetro-ai";
 
+// Start the HTTP server first — don't block on DB connection
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+// Connect to MongoDB separately — server stays up even if DB is down
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`);
-      console.log("Connected to MongoDB successfully");
-    });
+    console.log("Connected to MongoDB successfully");
   })
   .catch((err) => {
-    console.error("Failed to connect to MongoDB", err);
-    process.exit(1);
+    console.error("Failed to connect to MongoDB:", err.message);
+    console.error("Server is still running — fix your MongoDB URI or Atlas IP whitelist.");
   });
